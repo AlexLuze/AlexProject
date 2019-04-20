@@ -11,14 +11,14 @@ if 'initialParticleSE' in sgNodesList or 'initialShadingGroup' in sgNodesList:
     sgNodesList.remove('initialShadingGroup')
 
     # <2>.通过材质的SG节点找到对应物体或者是面级别
-coulmn = 0
+row = 0
 for index, sgNode in enumerate(sgNodesList):
-    row = (index) / 10
-    if coulmn == 10:
-        coulmn = 0
+    coulmn = (index) / 10
+    if row == 10:
+        row = 0
     print "%s-->%s-->%s" % (row, coulmn, sgNode)
-    coulmn += 1
-    # cmds.hyperShade(objects = sgNode)  # 返回值是直接选择物体，并非节点
+    # row += 1
+    cmds.hyperShade(objects=sgNode)  # 返回值是直接选择物体，并非节点
 
     # <3>.通过SG节点重命名找到材质球所连接的贴图文件并保存
     materialNode = cmds.listConnections(sgNode + '.surfaceShader')
@@ -39,17 +39,14 @@ for index, sgNode in enumerate(sgNodesList):
     # <2>.通过挪动UV点到指定的区域
     # cmds.polyEditUV(u=5,v=5)
     cmds.polyEditUV(u=row, v=coulmn)
+
+    # <3>.通过UV点的位置象限重命名该材质球所连接的贴图文件,命名遵循 <channel>.#.jpg
     # (1).链接函数处理贴图文件
-    dealTexture(currentFile, row, coulmn)
-    # coulmn += 1
-
-    # <3>.通过UV点的位置象限重命名该材质球所连接的贴图文件
-
-
-# 3.根据UV象限的序号修改材质球所连得贴图文件命名，命名遵循 <channel>.#.jpg
+    dealTexture(currentFile, coulmn, row)
+    row += 1
 
 
 # 4.处理贴图文件函数
-def dealTexture(texturePath, row, coulmn):
-    print "dealTexture-->%s--->%s" % (row, coulmn)
+def dealTexture(texturePath, coulmn, row):
+    print "dealTexture-->%s--->%s" % (coulmn, row)
 
