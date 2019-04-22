@@ -14,8 +14,8 @@ def maya_main_window():
 def arrange_uv():
     '''
     Rearrange the UV of the scene file according to the objects connected by the texture ball,
-    and rename the texture file connected by the texture ball according to the position of UV quadrant
-    :return: Returns True on success
+    and rename the texture file connected by the texture ball according to the position of UV quadrant.
+    :return: Returns True on success.
     '''
     # 1.通过材质球的SG节点找到对应obj信息
     # <1>.查找场景中的所有SG节点并保存列表sg_nodes_list中
@@ -39,57 +39,51 @@ def arrange_uv():
             column += 1
     return True
 
-
-# 2.对于相同材质球的obj，进行UV同一象限排布，没有重叠
 def edit_uv(sg_node, column, row):
     '''
-
-    :param sg_node:
-    :param column:
-    :param row:
-    :return:
-    :type:
+    For obj of the same material sphere, UV is arranged in the same quadrant without overlapping.
+    :param str sg_node: the current SG node.
+    :param int column: number of u.
+    :param int row: number of v
+    :return: True
+    :type: bool
     '''
-    cmds.hyperShade(objects=sg_node)  # 返回值是直接选择物体，并非节点
-    # <1>.通过‘被选择的’物体找到并选中UV点
+    # The return value is a direct selection of the object, not the node.
+    cmds.hyperShade(objects=sg_node)
+    # Find and select UV by 'selected' object.
     converted_uvs = pm.polyListComponentConversion(tuv=1)
     cmds.select(converted_uvs, add=True)
-    # <2>.挪动UV点到指定的区域
+    # <2>.Moves the currently selected uv to the specified quadrant.
     cmds.polyEditUV(u=column, v=row)
     return True
 
-
-# <3>.通过SG节点重命名找到材质球所连接的贴图文件并保存
 def set_attr_of_textrue(sg_node, udim_name):
     '''
     Find the map file connected to the texture ball through the SG node,
     copy and rename the map file in quadrant position.
-    :param sg_node:
-    :param udim_name:
-    :return:
+    :param str sg_node: the current SG node.
+    :param int udim_name: UDIM serial number.
+    :return: True
     :type:  bool
     '''
     color_channel_str = 'color'
     material_node = cmds.listConnections(sg_node + '.surfaceShader')
     color_file_node = cmds.listConnections('%s.%s' % (material_node[0], color_channel_str), type='file')
     texture_file_str = cmds.getAttr("%s.fileTextureName" % color_file_node[0])
-    # <3>.通过UV点的位置象限重命名该材质球所连接的贴图文件,命名遵循 <channel>.#.jpg
+    # <3>.Rename the map file by the location quadrant of UV.
     file_name_str = color_channel_str + '.' + str(udim_name)
-    # <4>.链接函数处理贴图文件。
     new_path = deal_texture(texture_file_str, file_name_str)
-    # <5>.更改材质所链接贴图及uv Tiling Mode 为Mari格式。
+    # <5>.Change the texture path and uv Tiling Mode to Mari format.
     cmds.setAttr("%s.fileTextureName" % color_file_node[0], new_path, type="string")
     cmds.setAttr('%s.uvTilingMode' % color_file_node[0], 3)
     return True
 
-
-# 3.处理贴图文件函数
 def deal_texture(source_texture, texture_name):
     '''
     Copy the texture file the texture ball is connected to and change its name.
     :param str source_texture: Absolute path to the original map file.
     :param str texture_name: Name of the modified texture file.
-    :return: texture_path: Modified map file absolute path
+    :return: str texture_path: Modified map file absolute path
     :type: str
     '''
     source_texture_name = os.path.basename(source_texture).split('.tif')[0]
