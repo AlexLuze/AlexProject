@@ -10,7 +10,7 @@ Here are the functions in the module:
     get_information_for_relationship(): get the information relationship of all the material nodes in the scene.
     create_material_node(): Create a material sphere node and assign the material sphere.
     create_texture_node(): Create a texture file node and return the value of the file node name.
-    create_place_texture(): Create a 2d texture map.
+    create_place_texture(): Create a place 2d texture.
 """
 import os
 from maya import cmds
@@ -147,8 +147,8 @@ def create_texture_node(texture_file_path):
 
 def create_place_texture(file_node):
     """
-    Create a 2d texture map.
-    :param unicode file_node: Created file node.
+    Create a place 2d texture.
+    :param str file_node: Created file node.
     :return: True
     :rtype: bool
     """
