@@ -10,7 +10,7 @@ There are three classes defined：
     Import widget class: ImportWidget(): Import widget layout and related link functions.
 
 There is a function defined：
-    parent_window(): Call the parent class of Maya created in the mat_dev_api
+    parent_window(): Call the parent class of Maya created in the mat_api
                     for the parent window of the program's main window.
 """
 import os
@@ -18,21 +18,21 @@ import os
 from PySide2 import QtWidgets
 from PySide2 import QtCore
 from shiboken2 import wrapInstance
-import material_lookdev_api as mat_dev_api
+import material_api as mat_api
 import xml_api
 
 # Gets the current project workspace for Maya as a global variable for backup.
-workspace = mat_dev_api.get_workspace()
+workspace = mat_api.get_workspace()
 
 
 def parent_window():
     """
-    Call the parent class of Maya created in the mat_dev_api
+    Call the parent class of Maya created in the mat_api
     for the parent window of the program's main window.
     :return: QWidget controls
     :rtype: QtWidgets.QWidget
     """
-    main_window = mat_dev_api.maya_main_window()
+    main_window = mat_api.maya_main_window()
 
     return wrapInstance(long(main_window), QtWidgets.QWidget)
 
@@ -97,11 +97,9 @@ class ExportWidget(QtWidgets.QWidget):
         xml_name_label = QtWidgets.QLabel(u"XML File Name :  ")
         self.xml_name = QtWidgets.QLineEdit()
         self.xml_name.setMinimumWidth(200)
-
         xml_format_label = QtWidgets.QLabel(u".xml")
 
         export_label = QtWidgets.QLabel(u"XML Export Path:")
-
         self.xml_path = QtWidgets.QLineEdit()
         self.xml_path.setMinimumWidth(200)
         self.xml_path.setText(workspace)
